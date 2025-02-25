@@ -78,8 +78,8 @@ function FinanceChart() {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" />
           <YAxis />
-          <Tooltip />
-          <Legend />
+          {/*
+           */}
           <Line
             type="monotone"
             dataKey="expense"
