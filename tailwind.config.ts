@@ -15,10 +15,10 @@ const config: Config = {
       },
       colors: {
         lightColor: "#8BDDF9",
-        lightShadeColor: "#edf9fd",
+        lightShadeColor: "#CBF2F6",
         normalPurple: "#B799D6",
-        lightPurple: "#D7C5E7",
-        normalYellow: "#FAE275",
+        lightPurple: "#E4C9DF",
+        normalYellow: "#F7FA9E",
         lightYellow: "#FAE161",
       },
     },

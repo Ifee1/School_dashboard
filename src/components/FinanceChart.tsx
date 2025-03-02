@@ -24,37 +24,56 @@ function FinanceChart() {
       name: "Feb",
       income: 3000,
       expense: 1398,
-      amt: 2210,
     },
     {
       name: "March",
       income: 2000,
       expense: 9800,
-      amt: 2290,
     },
     {
       name: "April",
       income: 2780,
       expense: 3908,
-      amt: 2000,
     },
     {
       name: "May",
       income: 1890,
       expense: 4800,
-      amt: 2181,
     },
     {
       name: "June",
       income: 2390,
       expense: 3800,
-      amt: 2500,
     },
     {
-      name: "Page G",
+      name: "July",
       income: 3490,
       expense: 4300,
-      amt: 2100,
+    },
+    {
+      name: "Aug",
+      income: 3490,
+      expense: 4300,
+    },
+    {
+      name: "Sept",
+      income: 3490,
+      expense: 4300,
+    },
+    {
+      name: "Oct",
+      income: 3490,
+      expense: 4300,
+    },
+    {
+      name: "Nov",
+      income: 3490,
+      expense: 4300,
+    },
+    {
+      name: "Dec",
+      income: 3490,
+      expense: 4300,
     },
   ];
   return (
@@ -63,30 +82,45 @@ function FinanceChart() {
         <h1 className="text-lg font-semibold">Finance</h1>
         <Image src="/moreDark.png" width={20} height={20} alt="" />
       </div>
-      <ResponsiveContainer width="100%" height="100%">
-        <LineChart
-          width={500}
-          height={300}
-          data={data}
-          margin={{
-            top: 5,
-            right: 30,
-            left: 20,
-            bottom: 5,
-          }}
-        >
+      <ResponsiveContainer width="100%" height="90%">
+        <LineChart width={500} height={300} data={data}>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" />
-          <YAxis />
-          {/*
-           */}
+          <XAxis
+            dataKey="name"
+            axisLine={false}
+            tick={{ fill: "#d1d5db" }}
+            tickLine={false}
+            tickMargin={10}
+          />
+          <YAxis
+            tickMargin={20}
+            axisLine={false}
+            tick={{ fill: "#d1d5db" }}
+            tickLine={false}
+          />
+          <Tooltip
+            contentStyle={{ borderRadius: "10px", borderColor: "lightgray" }}
+          />
+          <Legend
+            align="center"
+            verticalAlign="top"
+            wrapperStyle={{ paddingTop: "10px", paddingBottom: "20px" }}
+          />
           <Line
             type="monotone"
+            legendType="circle"
             dataKey="expense"
-            stroke="#8884d8"
+            stroke="#8BDDF9"
             activeDot={{ r: 8 }}
+            strokeWidth={3}
           />
-          <Line type="monotone" dataKey="income" stroke="#82ca9d" />
+          <Line
+            legendType="circle"
+            type="monotone"
+            dataKey="income"
+            stroke="#FAE161"
+            strokeWidth={3}
+          />
         </LineChart>
       </ResponsiveContainer>
     </div>
