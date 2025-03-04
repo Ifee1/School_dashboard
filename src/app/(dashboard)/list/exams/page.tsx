@@ -1,3 +1,4 @@
+import FormModal from "@/components/FormModal";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
@@ -6,7 +7,7 @@ import { renderRowExams } from "@/lib/types";
 import Image from "next/image";
 import Link from "next/link";
 
-function StudentList() {
+function ExamList() {
   const columns = [
     { header: "Subject", accessor: "subject" },
     {
@@ -48,15 +49,24 @@ function StudentList() {
 
         <td>
           <div className="flex items-center gap-2">
-            <Link href={`/list/teachers/${rowData.id}`}>
-              <button className="bg-lightColor rounded-full flex items-center justify-center w-7 h-7">
-                <Image src="/edit.png" alt="" width={16} height={16} />
-              </button>
-            </Link>
             {role === "admin" && (
-              <button className="bg-normalPurple rounded-full flex items-center justify-center w-7 h-7">
-                <Image src="/delete.png" alt="" width={16} height={16} />
-              </button>
+              <>
+                <FormModal
+                  modalData={{
+                    table: "exam",
+                    type: "update",
+                    id: rowData.id,
+                  }}
+                />
+
+                <FormModal
+                  modalData={{
+                    table: "exam",
+                    type: "delete",
+                    id: rowData.id,
+                  }}
+                />
+              </>
             )}
           </div>
         </td>
@@ -79,9 +89,12 @@ function StudentList() {
             <button className="w-8 h-8 rounded-full flex items-center justify-center bg-normalYellow">
               <Image width={14} height={14} src="/sort.png" alt="" />
             </button>
-            <button className="w-8 h-8 rounded-full flex items-center justify-center bg-normalYellow">
-              <Image width={14} height={14} src="/plus.png" alt="" />
-            </button>
+            <FormModal
+              modalData={{
+                table: "exam",
+                type: "create",
+              }}
+            />
           </div>
         </div>
       </div>
@@ -93,4 +106,4 @@ function StudentList() {
   );
 }
 
-export default StudentList;
+export default ExamList;

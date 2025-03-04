@@ -1,3 +1,5 @@
+import { FieldError } from "react-hook-form";
+
 export type TeacherTableColumn = {
   header: string;
   accessor: string;
@@ -105,4 +107,37 @@ export type renderRowAnnouncements = {
   title: string;
   class: string;
   date: string;
+};
+
+export type formModal = {
+  table:
+    | "teacher"
+    | "student"
+    | "parent"
+    | "subject"
+    | "class"
+    | "lesson"
+    | "exam"
+    | "assignment"
+    | "result"
+    | "attendance"
+    | "event"
+    | "announcement";
+  data?: any;
+  type: "create" | "update" | "delete";
+  id?: number;
+};
+
+export interface FormModalProps {
+  modalData: formModal;
+}
+
+export type inputField = {
+  label: string;
+  type?: string;
+  register: any;
+  name: string;
+  defaultValue?: string;
+  error?: FieldError;
+  inputProps?: React.InputHTMLAttributes<HTMLInputElement>;
 };

@@ -1,12 +1,10 @@
 import Announcements from "@/components/Announcements";
 import BigCalendar from "@/components/BigCalendar";
-import FormModal from "@/components/FormModal";
 import PerformanceChart from "@/components/PerformanceChart";
-import { table } from "console";
 import Image from "next/image";
 import Link from "next/link";
 
-function SingleTeacherPage() {
+function SingleStudentPage() {
   return (
     <div className="flex-1 p-4 flex flex-col xl:flex-row gap-4">
       {/*LEFT  */}
@@ -17,7 +15,7 @@ function SingleTeacherPage() {
           <div className="bg-lightColor py-6 px-4 rounded-md flex flex-1 gap-4">
             <div className="w-1/3">
               <Image
-                src="https://images.pexels.com/photos/32976/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=600"
+                src="https://images.pexels.com/photos/6256103/pexels-photo-6256103.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
                 alt=""
                 width={144}
                 height={144}
@@ -25,24 +23,9 @@ function SingleTeacherPage() {
               />
             </div>
             <div className="w-2/3 flex flex-col justify-between gap-4">
-              <div className="flex items-center justify-between">
-                <h1 className="text-xl font-semibold">Casper Okafor</h1>
-                <FormModal
-                  modalData={{
-                    id: 1,
-                    table: "teacher",
-                    type: "update",
-                    data: {
-                      id: 1,
-                      username: "Casper Okafor",
-                      email: "yy@gmail.com",
-                      bloodType: "O+",
-                    },
-                  }}
-                />
-              </div>
+              <h1 className="text-xl font-semibold">Chidimma Jerome</h1>
               <p className="text-gray-500 text-sm">
-                I teach French and German. Students surprisingly love it.
+                I really love Mathematics. And Coloring
               </p>
               <div className="flex items-center justify-between flex-wrap gap-2 text-xs font-medium">
                 <div className="w-full md:w-1/3 lg:w-full xl:w-1/3 flex items-center gap-2 ">
@@ -56,7 +39,7 @@ function SingleTeacherPage() {
                 <div className="w-full md:w-1/3 lg:w-full xl:w-1/3 flex items-center gap-2 ">
                   <Image src="/mail.png" alt="" width={14} height={14} />
                   <span>
-                    casperokafor
+                    dimmajerome
                     <br />
                     @gmail.com
                   </span>
@@ -94,8 +77,8 @@ function SingleTeacherPage() {
                 alt=""
               />
               <div className="">
-                <h1 className="text-xl font-semibold">5</h1>
-                <span className="text-sm text-gray-400">Branches</span>
+                <h1 className="text-xl font-semibold">5th</h1>
+                <span className="text-sm text-gray-400">Grade</span>
               </div>
             </div>
             {/* CARD*/}
@@ -108,7 +91,7 @@ function SingleTeacherPage() {
                 alt=""
               />
               <div className="">
-                <h1 className="text-xl font-semibold">8</h1>
+                <h1 className="text-xl font-semibold">20</h1>
                 <span className="text-sm text-gray-400">Lessons</span>
               </div>
             </div>
@@ -122,8 +105,8 @@ function SingleTeacherPage() {
                 alt=""
               />
               <div className="">
-                <h1 className="text-xl font-semibold">7</h1>
-                <span className="text-sm text-gray-400">Classes</span>
+                <h1 className="text-xl font-semibold">5A</h1>
+                <span className="text-sm text-gray-400">Class</span>
               </div>
             </div>
           </div>
@@ -131,7 +114,7 @@ function SingleTeacherPage() {
 
         {/* BOTTOM */}
         <div className="mt-4 bg-white rounded-md p-4 h-[800px]">
-          <h1>Teacher's Schedule</h1>
+          <h1>Student's Schedule</h1>
           <BigCalendar />
         </div>
       </div>
@@ -142,19 +125,19 @@ function SingleTeacherPage() {
           <h2 className="text-xl font-semibold">Shortcuts</h2>
           <div className="flex gap-4 flex-wrap text-xs text-gray-500">
             <Link className="p-3 rounded-md bg-lightColor" href="">
-              Teacher's Classes
+              Student's Teachers
             </Link>
             <Link className="p-3 rounded-md bg-lightShadeColor" href="">
-              Teacher's Students
+              Student's Result
             </Link>
             <Link className="p-3 rounded-md bg-lightPurple" href="">
-              Teacher's Lessons
+              Student's Lessons
             </Link>
             <Link className="p-3 rounded-md bg-lightYellow" href="">
-              Teacher's Exams
+              Student's Exams
             </Link>
             <Link className="p-3 rounded-md bg-pink-50" href="">
-              Teacher's Assignments
+              Student's Assignments
             </Link>
           </div>
         </div>
@@ -165,4 +148,4 @@ function SingleTeacherPage() {
   );
 }
 
-export default SingleTeacherPage;
+export default SingleStudentPage;
