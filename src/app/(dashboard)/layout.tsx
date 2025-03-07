@@ -1,7 +1,10 @@
+"use client";
+
 import Menu from "@/components/Menu";
 import Navbar from "@/components/Navbar";
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 export default function DashboardLayout({
   children,
@@ -22,7 +25,7 @@ export default function DashboardLayout({
         <Menu />
       </div>
       {/* RIGHT DIV */}
-      <div className="w-[86%] md:w-[92%] lg:w-[84%] xl:w-[86%] bg-[#f7f8fa] overflow-scroll no-scrollbar flex flex-col">
+      <div className="w-[86%] md:w-[92%] lg:w-[84%] xl:w-[86%] bg-[#f7f8fa] overflow-scroll no-scrollbar flex flex-col relative">
         <Navbar />
         {children}
       </div>

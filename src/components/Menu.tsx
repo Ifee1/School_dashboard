@@ -117,10 +117,11 @@ function Menu() {
       ],
     },
   ];
+
   return (
     <div className="mt-4 text-sm">
       {menuItems.map((menuitem) => (
-        <div className="flex flex-col gap-2" key={menuitem.title}>
+        <div className="flex flex-col gap-2 relative" key={menuitem.title}>
           <span className="hidden lg:block text-gray-400 my-1 font-light">
             {menuitem.title}
           </span>
