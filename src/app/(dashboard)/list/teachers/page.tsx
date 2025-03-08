@@ -3,92 +3,118 @@ import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import { role, teachersData } from "@/lib/data";
+import { ITEM_PER_PAGE } from "@/lib/pageSettings";
+import prisma from "@/lib/prisma";
 import { renderRowTeacher } from "@/lib/types";
-import { table } from "console";
+import { Class, Subject, Teacher } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
+function renderRow(
+  rowData: Teacher & { subjects: Subject[] } & { classes: Class[] }
+) {
+  return (
+    <tr
+      key={rowData.id}
+      className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lightPurple"
+    >
+      <td className="flex items-center gap-4 p-4">
+        <Image
+          width={40}
+          height={40}
+          className="rounded-full md:hidden xl:block w-10 h-10 object-cover"
+          alt=""
+          src={rowData.img || "/avatar.png"}
+        />
+        <div className="flex flex-col">
+          <h3 className="font-semibold">{rowData.name}</h3>
+          <p className="text-xs text-gray-500">{rowData.email}</p>
+        </div>
+      </td>
+      <td className="hidden md:table-cell">{rowData.username}</td>
+      <td className="hidden md:table-cell">
+        {rowData.subjects.map((subject) => subject.name).join(", ")}
+      </td>
+      <td className="hidden md:table-cell">
+        {rowData.classes.map((singleClass) => singleClass.name).join(", ")}
+      </td>
+      <td className="hidden md:hidden lg:table-cell">{rowData.phone}</td>
+      <td className="hidden md:hidden lg:table-cell">{rowData.address}</td>
+      <td>
+        <div className="flex items-center gap-2">
+          {role === "admin" && (
+            <>
+              <FormModal
+                modalData={{
+                  table: "teacher",
+                  type: "update",
+                  id: rowData.id,
+                }}
+              />
 
-function TeacherList() {
-  const columns = [
-    { header: "info", accessor: "info" },
-    {
-      header: "Teacher ID",
-      accessor: "teacherId",
-      className: "hidden md:table-cell",
-    },
-    {
-      header: "Subjects",
-      accessor: "subjects",
-      className: "hidden md:table-cell",
-    },
-    {
-      header: "Classes",
-      accessor: "classes",
-      className: "hidden md:table-cell",
-    },
-    { header: "Phone", accessor: "phone", className: "hidden lg:table-cell" },
-    {
-      header: "Address",
-      accessor: "address",
-      className: "hidden lg:table-cell",
-    },
-    {
-      header: "Actions",
-      accessor: "actions",
-    },
-  ];
+              <FormModal
+                modalData={{
+                  table: "teacher",
+                  type: "delete",
+                  id: rowData.id,
+                }}
+              />
+            </>
+          )}
+        </div>
+      </td>
+    </tr>
+  );
+}
 
-  function renderRow(rowData: renderRowTeacher) {
-    return (
-      <tr
-        key={rowData.id}
-        className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lightPurple"
-      >
-        <td className="flex items-center gap-4 p-4">
-          <Image
-            width={40}
-            height={40}
-            className="rounded-full md:hidden xl:block w-10 h-10 object-cover"
-            alt=""
-            src={rowData.photo}
-          />
-          <div className="flex flex-col">
-            <h3 className="font-semibold">{rowData.name}</h3>
-            <p className="text-xs text-gray-500">{rowData.email}</p>
-          </div>
-        </td>
-        <td className="hidden md:table-cell">{rowData.teacherId}</td>
-        <td className="hidden md:table-cell">{rowData.subjects.join(", ")}</td>
-        <td className="hidden md:table-cell">{rowData.classes.join(", ")}</td>
-        <td className="hidden md:hidden lg:table-cell">{rowData.phone}</td>
-        <td className="hidden md:hidden lg:table-cell">{rowData.address}</td>
-        <td>
-          <div className="flex items-center gap-2">
-            {role === "admin" && (
-              <>
-                <FormModal
-                  modalData={{
-                    table: "teacher",
-                    type: "update",
-                    id: rowData.id,
-                  }}
-                />
+const columns = [
+  { header: "info", accessor: "info" },
+  {
+    header: "Teacher ID",
+    accessor: "teacherId",
+    className: "hidden md:table-cell",
+  },
+  {
+    header: "Subjects",
+    accessor: "subjects",
+    className: "hidden md:table-cell",
+  },
+  {
+    header: "Classes",
+    accessor: "classes",
+    className: "hidden md:table-cell",
+  },
+  { header: "Phone", accessor: "phone", className: "hidden lg:table-cell" },
+  {
+    header: "Address",
+    accessor: "address",
+    className: "hidden lg:table-cell",
+  },
+  {
+    header: "Actions",
+    accessor: "actions",
+  },
+];
 
-                <FormModal
-                  modalData={{
-                    table: "teacher",
-                    type: "delete",
-                    id: rowData.id,
-                  }}
-                />
-              </>
-            )}
-          </div>
-        </td>
-      </tr>
-    );
-  }
+async function TeacherList({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | undefined };
+}) {
+  const { page, ...queryParams } = searchParams;
+  const p = page ? parseInt(page) : 1;
 
+  const teachersPrismaData = await prisma.teacher.findMany({
+    include: {
+      subjects: true,
+      classes: true,
+    },
+    take: ITEM_PER_PAGE,
+    skip: ITEM_PER_PAGE,
+  });
+  // console.log(searchParams);
+  // console.log(teachersPrismaData);
+  const teacherCount = await prisma.teacher.count();
+  console.log(teacherCount);
   return (
     <div className="bg-white p-4 m-4 mt-0 flex-1 rounded-md">
       {/* TOP */}
@@ -115,7 +141,11 @@ function TeacherList() {
         </div>
       </div>
       {/* LIST */}
-      <Table columns={columns} renderRow={renderRow} data={teachersData} />
+      <Table
+        columns={columns}
+        renderRow={renderRow}
+        data={teachersPrismaData}
+      />
       {/* PAGINATION */}
       <Pagination />
     </div>

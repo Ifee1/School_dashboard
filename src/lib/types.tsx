@@ -125,7 +125,7 @@ export type formModal = {
     | "announcement";
   data?: any;
   type: "create" | "update" | "delete";
-  id?: number;
+  id?: any;
 };
 
 export interface FormModalProps {
