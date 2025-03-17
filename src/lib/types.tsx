@@ -1,3 +1,14 @@
+import {
+  Announcement,
+  Class,
+  Exam,
+  Grade,
+  Lesson,
+  Parent,
+  Student,
+  Subject,
+  Teacher,
+} from "@prisma/client";
 import { FieldError } from "react-hook-form";
 
 export type TeacherTableColumn = {
@@ -23,56 +34,84 @@ export type renderRowTeacher = {
   email?: string;
   photo: string;
 };
+export type renderRowStudent = Student & { class: Class };
 
-export type renderRowStudent = {
-  id: number;
-  studentId: string;
-  name: string;
-  phone?: string;
-  grade: number;
-  class: string;
-  address: string;
-  email?: string;
-  photo: string;
+// export type renderRowStudent = {
+//   id: number;
+//   studentId: string;
+//   name: string;
+//   phone?: string;
+//   grade: number;
+//   class: string;
+//   address: string;
+//   email?: string;
+//   photo: string;
+// };
+
+export type renderRowParent = Parent & { students: Student[] };
+
+// export type renderRowParent = {
+//   id: number;
+//   students: string[];
+//   name: string;
+//   phone: string;
+//   address: string;
+//   email?: string;
+// };
+
+export type renderRowSubject = Subject & {
+  teachers: Teacher[];
+  lessons: Lesson[];
 };
 
-export type renderRowParent = {
-  id: number;
-  students: string[];
-  name: string;
-  phone: string;
-  address: string;
-  email?: string;
-};
+// export type renderRowSubject = {
+//   id: number;
+//   name: string;
+//   teachers: string[];
+// };
 
-export type renderRowSubject = {
-  id: number;
-  name: string;
-  teachers: string[];
+export type renderRowClasses = Class & {
+  supervisor: Teacher;
+  students: Student[];
+  lessons: Lesson[];
+  events: Event[];
+  announcements: Announcement[];
+  grade: Grade;
 };
+// export type renderRowClasses = {
+//   id: number;
+//   name: string;
+//   capacity: number;
+//   grade: number;
+//   supervisor: string;
+// };
 
-export type renderRowClasses = {
-  id: number;
-  name: string;
-  capacity: number;
-  grade: number;
-  supervisor: string;
+export type renderRowLessons = Lesson & {
+  subject: Subject;
+  class: Class;
+  teacher: Teacher;
 };
+// export type renderRowLessons = {
+//   id: number;
+//   subject: string;
+//   class: string;
+//   teacher: string;
+// };
 
-export type renderRowLessons = {
-  id: number;
-  subject: string;
-  class: string;
-  teacher: string;
+export type renderRowExams = Exam & {
+  lesson: {
+    subject: Subject;
+    class: Class;
+    teacher: Teacher;
+  };
 };
-
-export type renderRowExams = {
-  id: number;
-  subject: string;
-  class: string;
-  teacher: string;
-  date: string;
-};
+// export type renderRowExams = {
+//   id: number;
+//   subject: string;
+//   class: string;
+//   teacher: string;
+//   date: string;
+// };
 
 export type renderRowAssignments = {
   id: number;

@@ -3,80 +3,136 @@ import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import { classesData, role } from "@/lib/data";
+import { ITEM_PER_PAGE } from "@/lib/pageSettings";
+import prisma from "@/lib/prisma";
 import { renderRowClasses, renderRowSubject } from "@/lib/types";
+import { Prisma } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
 
-function ClassList() {
-  const columns = [
-    { header: "Class Name", accessor: "name" },
+const columns = [
+  { header: "Class Name", accessor: "name" },
 
-    {
-      header: "Capacity",
-      accessor: "capacity",
-      className: "hidden lg:table-cell",
-    },
-    {
-      header: "Grade",
-      accessor: "grade",
-      className: "hidden lg:table-cell",
-    },
-    {
-      header: "Supervisor",
-      accessor: "supervisor",
-      className: "hidden lg:table-cell",
-    },
+  {
+    header: "Capacity",
+    accessor: "capacity",
+    className: "hidden lg:table-cell",
+  },
+  {
+    header: "Grade",
+    accessor: "grade",
+    className: "hidden lg:table-cell",
+  },
+  {
+    header: "Supervisor",
+    accessor: "supervisor",
+    className: "hidden lg:table-cell",
+  },
 
-    {
-      header: "Actions",
-      accessor: "actions",
-    },
-  ];
+  {
+    header: "Actions",
+    accessor: "actions",
+  },
+];
 
-  function renderRow(rowData: renderRowClasses) {
-    return (
-      <tr
-        key={rowData.id}
-        className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lightPurple"
-      >
-        <td className="flex items-center gap-4 p-4">
-          <div className="flex flex-col">
-            <h3 className="font-semibold">{rowData.name}</h3>
-          </div>
-        </td>
+function renderRow(rowData: renderRowClasses) {
+  return (
+    <tr
+      key={rowData.id}
+      className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lightPurple"
+    >
+      <td className="flex items-center gap-4 p-4">
+        <div className="flex flex-col">
+          <h3 className="font-semibold">{rowData.name}</h3>
+        </div>
+      </td>
 
-        <td className="hidden md:hidden lg:table-cell">{rowData.capacity}</td>
+      <td className="hidden md:hidden lg:table-cell">{rowData.capacity}</td>
 
-        <td className="hidden md:hidden lg:table-cell">{rowData.grade}</td>
-        <td className="hidden md:hidden lg:table-cell">{rowData.supervisor}</td>
+      <td className="hidden md:hidden lg:table-cell">{rowData.grade.level}</td>
 
-        <td>
-          <div className="flex items-center gap-2">
-            {role === "admin" && (
-              <>
-                <FormModal
-                  modalData={{
-                    table: "class",
-                    type: "update",
-                    id: rowData.id,
-                  }}
-                />
+      <td className="hidden md:hidden lg:table-cell">
+        {rowData.supervisor.name}
+      </td>
 
-                <FormModal
-                  modalData={{
-                    table: "class",
-                    type: "delete",
-                    id: rowData.id,
-                  }}
-                />
-              </>
-            )}
-          </div>
-        </td>
-      </tr>
-    );
+      <td>
+        <div className="flex items-center gap-2">
+          {role === "admin" && (
+            <>
+              <FormModal
+                modalData={{
+                  table: "class",
+                  type: "update",
+                  id: rowData.id,
+                }}
+              />
+
+              <FormModal
+                modalData={{
+                  table: "class",
+                  type: "delete",
+                  id: rowData.id,
+                }}
+              />
+            </>
+          )}
+        </div>
+      </td>
+    </tr>
+  );
+}
+
+async function ClassList({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | undefined };
+}) {
+  const { page, ...queryParams } = searchParams;
+  const p = page ? parseInt(page) : 1;
+  const query: Prisma.ClassWhereInput = {};
+
+  if (queryParams) {
+    for (const [key, value] of Object.entries(queryParams)) {
+      if (value !== undefined) {
+        switch (key) {
+          case "search":
+            // query.name = {
+            //   contains: value,
+            //   mode: "insensitive",
+            // };
+            query.OR = [
+              { name: { contains: value, mode: "insensitive" } },
+              {
+                supervisor: { name: { contains: value, mode: "insensitive" } },
+              },
+            ];
+            break;
+
+          case "supervisorId":
+            query.supervisorId = value;
+            break;
+        }
+      }
+    }
   }
 
+  const [classesPrismaData, count] = await prisma.$transaction([
+    prisma.class.findMany({
+      where: query,
+      take: ITEM_PER_PAGE,
+      skip: ITEM_PER_PAGE * (p - 1),
+      include: {
+        students: true,
+        lessons: true,
+        events: true,
+        announcements: true,
+        supervisor: true,
+        grade: true,
+      },
+    }),
+    prisma.class.count({ where: query }),
+  ]);
+  // console.log(classesPrismaData);
   return (
     <div className="bg-white p-4 m-4 mt-0 flex-1 rounded-md">
       {/* TOP */}
@@ -104,9 +160,9 @@ function ClassList() {
         </div>
       </div>
       {/* LIST */}
-      <Table columns={columns} renderRow={renderRow} data={classesData} />
+      <Table columns={columns} renderRow={renderRow} data={classesPrismaData} />
       {/* PAGINATION */}
-      <Pagination />
+      <Pagination page={p} count={count} />
     </div>
   );
 }

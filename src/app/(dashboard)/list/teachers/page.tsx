@@ -6,9 +6,10 @@ import { role, teachersData } from "@/lib/data";
 import { ITEM_PER_PAGE } from "@/lib/pageSettings";
 import prisma from "@/lib/prisma";
 import { renderRowTeacher } from "@/lib/types";
-import { Class, Subject, Teacher } from "@prisma/client";
+import { Class, Prisma, Subject, Teacher } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
+
 function renderRow(
   rowData: Teacher & { subjects: Subject[] } & { classes: Class[] }
 ) {
@@ -41,15 +42,20 @@ function renderRow(
       <td className="hidden md:hidden lg:table-cell">{rowData.address}</td>
       <td>
         <div className="flex items-center gap-2">
+          <Link href={`/list/teachers/${rowData.id}`}>
+            <button className="w-7 h-7 flex items-center justify-center rounded-full bg-lightColor">
+              <Image src="/view.png" alt="" width={16} height={16} />
+            </button>
+          </Link>
           {role === "admin" && (
             <>
-              <FormModal
+              {/* <FormModal
                 modalData={{
                   table: "teacher",
                   type: "update",
                   id: rowData.id,
                 }}
-              />
+              /> */}
 
               <FormModal
                 modalData={{
@@ -102,8 +108,32 @@ async function TeacherList({
 }) {
   const { page, ...queryParams } = searchParams;
   const p = page ? parseInt(page) : 1;
-  // console.log("type of p", typeof p);
-  // console.log(p);
+  ///////////////URL PARAM CONDITIONS//////////
+  const query: Prisma.TeacherWhereInput = {};
+  if (queryParams) {
+    for (const [key, value] of Object.entries(queryParams)) {
+      if (value !== undefined) {
+        switch (key) {
+          case "classId":
+            {
+              query.lessons = {
+                some: {
+                  classId: parseInt(value),
+                },
+              };
+            }
+            break;
+          case "search":
+            query.name = {
+              contains: value,
+              mode: "insensitive",
+            };
+            break;
+          default:
+        }
+      }
+    }
+  }
 
   const [teachersPrismaData, count] = await prisma.$transaction([
     prisma.teacher.findMany({
@@ -111,11 +141,12 @@ async function TeacherList({
         subjects: true,
         classes: true,
       },
-      // take: 5,
+
+      where: query,
       take: ITEM_PER_PAGE,
       skip: ITEM_PER_PAGE * (p - 1),
     }),
-    prisma.teacher.count(),
+    prisma.teacher.count({ where: query }),
   ]);
 
   // const teachersPrismaData = await prisma.teacher.findMany({
@@ -127,6 +158,7 @@ async function TeacherList({
   //   skip: ITEM_PER_PAGE,
   // });
 
+  // console.log(queryParams);
   // console.log(searchParams);
   // console.log(teachersPrismaData);
   // const teacherCount = await prisma.teacher.count();

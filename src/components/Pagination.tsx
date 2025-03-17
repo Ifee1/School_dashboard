@@ -11,12 +11,13 @@ function Pagination({ page, count }: { page: number; count: number }) {
     router.push(`${window.location.pathname}?${params}`);
   }
 
-  const hasPrev = ITEM_PER_PAGE * (page - 1) > 0;
-  const hasNext = ITEM_PER_PAGE * (page - 1) + ITEM_PER_PAGE < count;
+  const hasPrev = page === 1;
+  // const hasPrev = ITEM_PER_PAGE * (page - 1) > 0;
+  const hasNext = ITEM_PER_PAGE * page < count;
   return (
     <div className="p-4 flex items-center justify-between  text-gray-500">
       <button
-        disabled={!hasPrev}
+        disabled={hasPrev}
         onClick={() => changePage(page - 1)}
         className="py-2 px-4 rounded-md text-xs bg-slate-400 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
       >

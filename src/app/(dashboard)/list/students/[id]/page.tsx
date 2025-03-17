@@ -124,13 +124,19 @@ function SingleStudentPage() {
         <div className="bg-white p-4 rounded-md">
           <h2 className="text-xl font-semibold">Shortcuts</h2>
           <div className="flex gap-4 flex-wrap text-xs text-gray-500">
-            <Link className="p-3 rounded-md bg-lightColor" href="">
+            <Link
+              className="p-3 rounded-md bg-lightColor"
+              href={`/list/teachers?classId=${3}`}
+            >
               Student's Teachers
             </Link>
             <Link className="p-3 rounded-md bg-lightShadeColor" href="">
               Student's Result
             </Link>
-            <Link className="p-3 rounded-md bg-lightPurple" href="">
+            <Link
+              className="p-3 rounded-md bg-lightPurple"
+              href={`/list/lessons?classId=${2}`}
+            >
               Student's Lessons
             </Link>
             <Link className="p-3 rounded-md bg-lightYellow" href="">

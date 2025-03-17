@@ -141,13 +141,22 @@ function SingleTeacherPage() {
         <div className="bg-white p-4 rounded-md">
           <h2 className="text-xl font-semibold">Shortcuts</h2>
           <div className="flex gap-4 flex-wrap text-xs text-gray-500">
-            <Link className="p-3 rounded-md bg-lightColor" href="">
+            <Link
+              className="p-3 rounded-md bg-lightColor"
+              href={`/list/classes?supervisorId=${"teacher12"}`}
+            >
               Teacher's Classes
             </Link>
-            <Link className="p-3 rounded-md bg-lightShadeColor" href="">
+            <Link
+              className="p-3 rounded-md bg-lightShadeColor"
+              href={`/list/students?teacherId=${"teacher2"}`}
+            >
               Teacher's Students
             </Link>
-            <Link className="p-3 rounded-md bg-lightPurple" href="">
+            <Link
+              className="p-3 rounded-md bg-lightPurple"
+              href={`/list/lessons?teacherId=${"teacher2"}`}
+            >
               Teacher's Lessons
             </Link>
             <Link className="p-3 rounded-md bg-lightYellow" href="">

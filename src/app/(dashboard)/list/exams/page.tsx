@@ -3,76 +3,126 @@ import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import { role, examsData } from "@/lib/data";
+import { ITEM_PER_PAGE } from "@/lib/pageSettings";
+import prisma from "@/lib/prisma";
 import { renderRowExams } from "@/lib/types";
+import { Prisma } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
 
-function ExamList() {
-  const columns = [
-    { header: "Subject", accessor: "subject" },
-    {
-      header: "Class",
-      accessor: "class",
-      className: "hidden md:table-cell",
-    },
-    {
-      header: "Teacher",
-      accessor: "teacher",
-      className: "hidden md:table-cell",
-    },
-    {
-      header: "Date",
-      accessor: "date",
-      className: "hidden md:table-cell",
-    },
+const columns = [
+  { header: "Subject", accessor: "subject" },
+  {
+    header: "Class",
+    accessor: "class",
+    className: "hidden md:table-cell",
+  },
+  {
+    header: "Teacher",
+    accessor: "teacher",
+    className: "hidden md:table-cell",
+  },
+  {
+    header: "Date",
+    accessor: "date",
+    className: "hidden md:table-cell",
+  },
 
-    {
-      header: "Actions",
-      accessor: "actions",
-    },
-  ];
+  {
+    header: "Actions",
+    accessor: "actions",
+  },
+];
 
-  function renderRow(rowData: renderRowExams) {
-    return (
-      <tr
-        key={rowData.id}
-        className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lightPurple"
-      >
-        <td className="flex items-center gap-4 p-4">
-          <div className="flex flex-col">
-            <h3 className="font-semibold">{rowData.subject}</h3>
-          </div>
-        </td>
-        <td className="hidden md:table-cell">{rowData.class}</td>
-        <td className="hidden md:table-cell">{rowData.teacher}</td>
-        <td className="hidden md:table-cell">{rowData.date}</td>
+function renderRow(rowData: renderRowExams) {
+  return (
+    <tr
+      key={rowData.id}
+      className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lightPurple"
+    >
+      <td className="flex items-center gap-4 p-4">
+        <div className="flex flex-col">
+          <h3 className="font-semibold">{rowData.lesson.subject.name}</h3>
+        </div>
+      </td>
+      <td className="hidden md:table-cell">{rowData.lesson.class.name}</td>
+      <td className="hidden md:table-cell">{rowData.lesson.teacher.name}</td>
+      <td className="hidden md:table-cell">
+        {new Intl.DateTimeFormat("en-US").format(rowData.startTime)}
+      </td>
 
-        <td>
-          <div className="flex items-center gap-2">
-            {role === "admin" && (
-              <>
-                <FormModal
-                  modalData={{
-                    table: "exam",
-                    type: "update",
-                    id: rowData.id,
-                  }}
-                />
+      <td>
+        <div className="flex items-center gap-2">
+          {role === "admin" && (
+            <>
+              <FormModal
+                modalData={{
+                  table: "exam",
+                  type: "update",
+                  id: rowData.id,
+                }}
+              />
 
-                <FormModal
-                  modalData={{
-                    table: "exam",
-                    type: "delete",
-                    id: rowData.id,
-                  }}
-                />
-              </>
-            )}
-          </div>
-        </td>
-      </tr>
-    );
+              <FormModal
+                modalData={{
+                  table: "exam",
+                  type: "delete",
+                  id: rowData.id,
+                }}
+              />
+            </>
+          )}
+        </div>
+      </td>
+    </tr>
+  );
+}
+
+async function ExamList({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | undefined };
+}) {
+  const { page, ...queryParams } = searchParams;
+  const p = page ? parseInt(page) : 1;
+  const query: Prisma.ExamWhereInput = {};
+
+  if (queryParams) {
+    for (const [key, value] of Object.entries(queryParams)) {
+      if (value !== undefined) {
+        switch (key) {
+          case "search":
+            // query.name = { contains: value, mode: "insensitive" };
+            query.lesson = {
+              subject: { name: { contains: value, mode: "insensitive" } },
+              teacher: { name: { contains: value, mode: "insensitive" } },
+            };
+          // case "teacherId":
+          //   query.teacherId = value;
+          // case "classId":
+          //   query.classId = parseInt(value);
+        }
+      }
+    }
   }
+
+  const [examsPrismaData, count] = await prisma.$transaction([
+    prisma.exam.findMany({
+      where: query,
+      take: ITEM_PER_PAGE,
+      skip: ITEM_PER_PAGE * (p - 1),
+      include: {
+        lesson: {
+          select: {
+            subject: { select: { name: true } },
+            teacher: { select: { name: true } },
+            class: { select: { name: true } },
+          },
+        },
+      },
+    }),
+    prisma.exam.count({ where: query }),
+  ]);
 
   return (
     <div className="bg-white p-4 m-4 mt-0 flex-1 rounded-md">
@@ -99,9 +149,9 @@ function ExamList() {
         </div>
       </div>
       {/* LIST */}
-      <Table columns={columns} renderRow={renderRow} data={examsData} />
+      <Table columns={columns} renderRow={renderRow} data={examsPrismaData} />
       {/* PAGINATION */}
-      <Pagination />
+      <Pagination page={p} count={count} />
     </div>
   );
 }
