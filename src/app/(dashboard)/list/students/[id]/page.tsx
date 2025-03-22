@@ -130,19 +130,28 @@ function SingleStudentPage() {
             >
               Student's Teachers
             </Link>
-            <Link className="p-3 rounded-md bg-lightShadeColor" href="">
+            <Link
+              className="p-3 rounded-md bg-lightShadeColor"
+              href={`/list/results?classId=${2}`}
+            >
               Student's Result
             </Link>
             <Link
               className="p-3 rounded-md bg-lightPurple"
-              href={`/list/lessons?classId=${2}`}
+              href={`/list/lessons?studentId=${"student2"}`}
             >
               Student's Lessons
             </Link>
-            <Link className="p-3 rounded-md bg-lightYellow" href="">
+            <Link
+              className="p-3 rounded-md bg-lightYellow"
+              href={`/list/exams?classId=${2}`}
+            >
               Student's Exams
             </Link>
-            <Link className="p-3 rounded-md bg-pink-50" href="">
+            <Link
+              className="p-3 rounded-md bg-pink-50"
+              href={`/list/assignments?classId=${2}`}
+            >
               Student's Assignments
             </Link>
           </div>

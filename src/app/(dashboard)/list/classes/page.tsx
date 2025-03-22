@@ -2,10 +2,11 @@ import FormModal from "@/components/FormModal";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
-import { classesData, role } from "@/lib/data";
+// import { classesData, role } from "@/lib/data";
 import { ITEM_PER_PAGE } from "@/lib/pageSettings";
 import prisma from "@/lib/prisma";
 import { renderRowClasses, renderRowSubject } from "@/lib/types";
+import { role } from "@/lib/utils";
 import { Prisma } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
@@ -30,7 +31,7 @@ const columns = [
   },
 
   {
-    header: "Actions",
+    header: `${role === "admin" ? "Actions" : ""}`,
     accessor: "actions",
   },
 ];

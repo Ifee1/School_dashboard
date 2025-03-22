@@ -20,7 +20,7 @@ const columns = [
   },
 
   {
-    header: "Actions",
+    header: `${role === "admin" || role === "teacher" ? "Actions" : ""}`,
     accessor: "actions",
   },
 ];

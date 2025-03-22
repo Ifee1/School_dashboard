@@ -14,6 +14,10 @@ const StudentForm = dynamic(() => import("./forms/StudentForm"), {
   loading: () => <h1>Loading ...</h1>,
 });
 
+const SubjectForm = dynamic(() => import("./forms/SubjectForm"), {
+  loading: () => <h1>Loading ...</h1>,
+});
+
 // For each table, we need a different form. Hence the component below
 const forms: {
   [key: string]: (type: "create" | "update", data?: any) => JSX.Element;
@@ -33,6 +37,15 @@ const forms: {
         type: type,
         data: data,
         table: "student",
+      }}
+    />
+  ),
+  subject: (type, data) => (
+    <SubjectForm
+      modalData={{
+        type: type,
+        data: data,
+        table: "subject",
       }}
     />
   ),

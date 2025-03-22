@@ -1,4 +1,4 @@
-"use client";
+// "use client";
 
 import Menu from "@/components/Menu";
 import Navbar from "@/components/Navbar";

@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { AttendanceChartType } from "@/lib/types";
 import {
   BarChart,
   Bar,
@@ -13,42 +13,12 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-function AttendanceChart() {
-  const data = [
-    {
-      name: "Mon",
-      present: 50,
-      absent: 40,
-    },
-    {
-      name: "Tue",
-      present: 40,
-      absent: 50,
-    },
-    {
-      name: "Wed",
-      present: 20,
-      absent: 80,
-    },
-    {
-      name: "Thur",
-      present: 100,
-      absent: 10,
-    },
-    {
-      name: "Fri",
-      present: 100,
-      absent: 2,
-    },
-  ];
+function AttendanceChart({ data }: { data: AttendanceChartType }) {
+  // console.log(data);
   return (
-    <div className="bg-white rounded-lg h-full p-4">
-      <div className="flex justify-between items-center">
-        <h1 className="text-lg font-semibold">Attendance</h1>
-        <Image src="/moreDark.png" width={20} height={20} alt="" />
-      </div>
+    <>
       <ResponsiveContainer width="100%" height="90%">
-        <BarChart width={500} height={300} data={data} barSize={20}>
+        <BarChart width={500} height={300} data={data} barSize={80}>
           <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#ddd" />
           <XAxis
             dataKey="name"
@@ -79,7 +49,7 @@ function AttendanceChart() {
           />
         </BarChart>
       </ResponsiveContainer>
-    </div>
+    </>
   );
 }
 

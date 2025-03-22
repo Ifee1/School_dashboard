@@ -2,10 +2,11 @@ import FormModal from "@/components/FormModal";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
-import { lessonsData, role } from "@/lib/data";
+// import { lessonsData, role } from "@/lib/data";
 import { ITEM_PER_PAGE } from "@/lib/pageSettings";
 import prisma from "@/lib/prisma";
 import { renderRowLessons } from "@/lib/types";
+import { role } from "@/lib/utils";
 import { Prisma } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
@@ -25,7 +26,7 @@ const columns = [
   },
 
   {
-    header: "Actions",
+    header: `${role === "admin" ? "Actions" : ""}`,
     accessor: "actions",
   },
 ];
@@ -81,7 +82,6 @@ async function LessonsList({
   const { page, ...queryParams } = searchParams;
   const p = page ? parseInt(page) : 1;
   const query: Prisma.LessonWhereInput = {};
-
   if (queryParams) {
     for (const [key, value] of Object.entries(queryParams)) {
       if (value !== undefined) {

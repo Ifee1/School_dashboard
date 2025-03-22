@@ -1,10 +1,13 @@
 import {
   Announcement,
+  Assignment,
   Class,
+  Event,
   Exam,
   Grade,
   Lesson,
   Parent,
+  Result,
   Student,
   Subject,
   Teacher,
@@ -113,40 +116,64 @@ export type renderRowExams = Exam & {
 //   date: string;
 // };
 
-export type renderRowAssignments = {
-  id: number;
-  subject: string;
-  class: string;
-  teacher: string;
-  dueDate: string;
+export type renderRowAssignments = Assignment & {
+  lesson: {
+    subject: Subject;
+    class: Class;
+    teacher: Teacher;
+  };
 };
+// export type renderRowAssignments = {
+//   id: number;
+//   subject: string;
+//   class: string;
+//   teacher: string;
+//   dueDate: string;
+// };
 
 export type renderRowResults = {
   id: number;
-  subject: string;
-  class: string;
-  teacher: string;
-  student: string;
-  date: string;
-  type: "exam" | "assignment";
+  title: string;
+  studentName: string;
+  teacherName: string;
   score: number;
+  className: string;
+  startTime: Date;
+};
+// export type renderRowResults = {
+//   id: number;
+//   subject: string;
+//   class: string;
+//   teacher: string;
+//   student: string;
+//   date: string;
+//   type: "exam" | "assignment";
+//   score: number;
+// };
+
+export type renderRowEvents = Event & {
+  class: Class;
 };
 
-export type renderRowEvents = {
-  id: number;
-  title: string;
-  class: string;
-  date: string;
-  startTime: string;
-  endTime: string;
+// export type renderRowEvents = {
+//   id: number;
+//   title: string;
+//   class: string;
+//   date: string;
+//   startTime: string;
+//   endTime: string;
+// };
+
+export type renderRowAnnouncements = Event & {
+  class: Class;
 };
 
-export type renderRowAnnouncements = {
-  id: number;
-  title: string;
-  class: string;
-  date: string;
-};
+// export type renderRowAnnouncements = {
+//   id: number;
+//   title: string;
+//   class: string;
+//   date: string;
+// };
 
 export type formModal = {
   table:
@@ -179,4 +206,37 @@ export type inputField = {
   defaultValue?: string;
   error?: FieldError;
   inputProps?: React.InputHTMLAttributes<HTMLInputElement>;
+};
+
+export type UserCardModal = {
+  type: "admin" | "teacher" | "student" | "parent";
+};
+
+export interface UserCardModalProps {
+  userModal: UserCardModal;
+}
+
+export type countChartType = {
+  boys: number;
+  girls: number;
+};
+
+export type AttendanceChartType = {
+  name: string;
+  present: number;
+  absent: number;
+}[];
+
+export interface AttendanceChartProps {
+  data: AttendanceChartType[];
+}
+
+export type BigCalendarModal = {
+  type: "teacherId" | "classId";
+  id: string | number;
+};
+
+export type CurrentState = {
+  success: boolean;
+  error: boolean;
 };

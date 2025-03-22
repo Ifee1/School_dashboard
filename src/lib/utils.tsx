@@ -1,0 +1,72 @@
+import { auth } from "@clerk/nextjs/server";
+import { title } from "process";
+let role: any;
+let currentUserId: any;
+
+async function Utils() {
+  const { userId, sessionClaims } = await auth();
+  role = (sessionClaims?.metadata as { role: string }).role;
+  currentUserId = userId;
+}
+
+Utils().then(() => {
+  //   console.log(currentUserId);
+  //   console.log(role);
+});
+
+function currentWorkWeek() {
+  const today = new Date();
+  const dayOfWeek = today.getDay();
+  const startOfWeek = new Date(today);
+  const endOfWeek = new Date(startOfWeek);
+  endOfWeek.setDate(startOfWeek.getDate() + 4);
+  endOfWeek.setHours(23, 59, 59, 999);
+
+  switch (dayOfWeek) {
+    case 0:
+      startOfWeek.setDate(today.getDate() + 1);
+      break;
+    case 6:
+      startOfWeek.setDate(today.getDate() + 2);
+      break;
+    default:
+      startOfWeek.setDate(today.getDate() - (dayOfWeek - 1));
+      startOfWeek.setHours(0, 0, 0, 0);
+
+      break;
+  }
+
+  return { startOfWeek, endOfWeek };
+}
+
+export function adjustedSchedule(
+  lessons: { title: string; start: Date; end: Date }[]
+) {
+  const { startOfWeek, endOfWeek } = currentWorkWeek();
+  return lessons.map(function (lesson) {
+    const lessonDayOfWeek = lesson.start.getDay();
+    const daysFromMonday = lessonDayOfWeek === 0 ? 6 : lessonDayOfWeek - 1;
+    const adjustedStartDate = new Date(startOfWeek);
+    adjustedStartDate.setDate(startOfWeek.getDay() + daysFromMonday);
+    adjustedStartDate.setHours(
+      lesson.start.getHours(),
+      lesson.start.getMinutes(),
+      lesson.start.getSeconds()
+    );
+    const adjustedEndDate = new Date(adjustedStartDate);
+    adjustedEndDate.setHours(
+      lesson.end.getHours(),
+      lesson.end.getMinutes(),
+      lesson.end.getSeconds()
+    );
+    return {
+      title: lesson.title,
+      start: adjustedStartDate,
+      end: adjustedEndDate,
+    };
+  });
+}
+
+export { currentUserId };
+export { role };
+export default Utils();

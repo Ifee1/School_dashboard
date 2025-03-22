@@ -2,10 +2,10 @@ import FormModal from "@/components/FormModal";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
-import { role, teachersData } from "@/lib/data";
 import { ITEM_PER_PAGE } from "@/lib/pageSettings";
 import prisma from "@/lib/prisma";
 import { renderRowTeacher } from "@/lib/types";
+import { role } from "@/lib/utils";
 import { Class, Prisma, Subject, Teacher } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
@@ -49,13 +49,13 @@ function renderRow(
           </Link>
           {role === "admin" && (
             <>
-              {/* <FormModal
+              <FormModal
                 modalData={{
                   table: "teacher",
                   type: "update",
                   id: rowData.id,
                 }}
-              /> */}
+              />
 
               <FormModal
                 modalData={{
@@ -96,7 +96,7 @@ const columns = [
     className: "hidden lg:table-cell",
   },
   {
-    header: "Actions",
+    header: `${role === "admin" ? "Actions" : ""}`,
     accessor: "actions",
   },
 ];

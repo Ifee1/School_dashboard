@@ -6,6 +6,7 @@ import { role, studentsData, teachersData } from "@/lib/data";
 import { ITEM_PER_PAGE } from "@/lib/pageSettings";
 import prisma from "@/lib/prisma";
 import { renderRowStudent } from "@/lib/types";
+import { currentUserId } from "@/lib/utils";
 import { Prisma } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
@@ -34,7 +35,7 @@ const columns = [
     className: "hidden lg:table-cell",
   },
   {
-    header: "Actions",
+    header: `${role === "admin" ? "Actions" : ""}`,
     accessor: "actions",
   },
 ];
@@ -72,13 +73,13 @@ function renderRow(rowData: renderRowStudent) {
           </Link>
           {role === "admin" && (
             <>
-              {/* <FormModal
-                  modalData={{
-                    table: "student",
-                    type: "update",
-                    id: rowData.id,
-                  }}
-                /> */}
+              <FormModal
+                modalData={{
+                  table: "student",
+                  type: "update",
+                  id: rowData.id,
+                }}
+              />
 
               <FormModal
                 modalData={{
@@ -124,7 +125,9 @@ async function StudentList({
               mode: "insensitive",
             };
             break;
+
           default:
+            break;
         }
       }
     }

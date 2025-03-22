@@ -1,6 +1,10 @@
+import { UserButton } from "@clerk/nextjs";
+import { currentUser } from "@clerk/nextjs/server";
 import Image from "next/image";
 
-function Navbar() {
+async function Navbar() {
+  const user = await currentUser();
+  const role = user?.publicMetadata.role as string;
   return (
     <div className="flex items-center justify-between p-4">
       {/* SEARCH */}
@@ -24,16 +28,19 @@ function Navbar() {
           </div>
         </div>
         <div className="flex flex-col">
-          <span className="text-xs leading-3 font-medium">Matthew Syler</span>
-          <span className="text-[10px] text-right text-gray-500">Admin</span>
+          <span className="text-xs leading-3 font-medium">
+            {user?.username}
+          </span>
+          <span className="text-[10px] text-right text-gray-500">{role}</span>
         </div>
-        <Image
+        {/* <Image
           src="/avatar.png"
           alt=""
           width={36}
           height={36}
-          className="rounded-full"
-        />
+          className="rounded-full
+        /> */}
+        <UserButton />
       </div>
     </div>
   );
