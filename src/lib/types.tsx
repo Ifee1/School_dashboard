@@ -12,6 +12,7 @@ import {
   Subject,
   Teacher,
 } from "@prisma/client";
+import { Dispatch, SetStateAction } from "react";
 import { FieldError } from "react-hook-form";
 
 export type TeacherTableColumn = {
@@ -192,10 +193,12 @@ export type formModal = {
   data?: any;
   type: "create" | "update" | "delete";
   id?: any;
+  setOpen?: Dispatch<SetStateAction<boolean>>;
 };
 
 export interface FormModalProps {
   modalData: formModal;
+  relatedData?: any;
 }
 
 export type inputField = {
@@ -206,6 +209,7 @@ export type inputField = {
   defaultValue?: string;
   error?: FieldError;
   inputProps?: React.InputHTMLAttributes<HTMLInputElement>;
+  hidden?: boolean;
 };
 
 export type UserCardModal = {

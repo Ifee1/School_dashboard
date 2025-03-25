@@ -1,3 +1,4 @@
+import FormContainer from "@/components/FormContainer";
 import FormModal from "@/components/FormModal";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
@@ -45,15 +46,15 @@ function renderRow(rowData: renderRowSubject) {
         <div className="flex items-center gap-2">
           {role === "admin" && (
             <>
-              <FormModal
+              <FormContainer
                 modalData={{
                   table: "subject",
                   type: "update",
-                  id: rowData.id,
+                  data: rowData,
                 }}
               />
 
-              <FormModal
+              <FormContainer
                 modalData={{
                   table: "subject",
                   type: "delete",
@@ -96,7 +97,7 @@ async function SubjectList({
     }
   }
 
-  const [subjectPrismaData, count] = await prisma.$transaction([
+  const [data, count] = await prisma.$transaction([
     prisma.subject.findMany({
       take: ITEM_PER_PAGE,
       skip: ITEM_PER_PAGE * (p - 1),
@@ -139,7 +140,7 @@ async function SubjectList({
         </div>
       </div>
       {/* LIST */}
-      <Table columns={columns} renderRow={renderRow} data={subjectPrismaData} />
+      <Table columns={columns} renderRow={renderRow} data={data} />
       {/* PAGINATION */}
       <Pagination page={p} count={count} />
     </div>

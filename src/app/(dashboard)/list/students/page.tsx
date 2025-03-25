@@ -5,11 +5,12 @@ import TableSearch from "@/components/TableSearch";
 import { role, studentsData, teachersData } from "@/lib/data";
 import { ITEM_PER_PAGE } from "@/lib/pageSettings";
 import prisma from "@/lib/prisma";
-import { renderRowStudent } from "@/lib/types";
+import { FormModalProps, renderRowStudent } from "@/lib/types";
 import { currentUserId } from "@/lib/utils";
 import { Prisma } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 
 const columns = [
   { header: "info", accessor: "info" },
@@ -80,7 +81,6 @@ function renderRow(rowData: renderRowStudent) {
                   id: rowData.id,
                 }}
               />
-
               <FormModal
                 modalData={{
                   table: "assignment",

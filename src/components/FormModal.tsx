@@ -2,9 +2,14 @@
 
 import { FormModalProps } from "@/lib/types";
 import Image from "next/image";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 // import TeacherForm from "./forms/TeacherForm";
 import dynamic from "next/dynamic";
+import { Input } from "postcss";
+import { useFormState } from "react-dom";
+import { deleteSubject } from "@/lib/actions";
+import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 
 const TeacherForm = dynamic(() => import("./forms/TeacherForm"), {
   loading: () => <h1>Loading ...</h1>,
@@ -18,40 +23,58 @@ const SubjectForm = dynamic(() => import("./forms/SubjectForm"), {
   loading: () => <h1>Loading ...</h1>,
 });
 
+const deleteActionObject = {
+  subject: deleteSubject,
+  // class: deleteClass,
+};
+
 // For each table, we need a different form. Hence the component below
 const forms: {
-  [key: string]: (type: "create" | "update", data?: any) => JSX.Element;
+  [key: string]: (
+    setOpen: Dispatch<SetStateAction<boolean>>,
+    type: "create" | "update",
+    data?: any,
+    relatedData?: any
+  ) => JSX.Element;
 } = {
-  teacher: (type, data) => (
+  teacher: (setOpen, type, data, relatedData) => (
     <TeacherForm
       modalData={{
         type: type,
         data: data,
         table: "teacher",
+        setOpen: setOpen,
       }}
+      relatedData={relatedData}
     />
   ),
-  student: (type, data) => (
+  student: (setOpen, type, data, relatedData) => (
     <StudentForm
       modalData={{
         type: type,
         data: data,
         table: "student",
+        setOpen: setOpen,
       }}
+      relatedData={relatedData}
     />
   ),
-  subject: (type, data) => (
+  subject: (setOpen, type, data, relatedData) => (
     <SubjectForm
       modalData={{
         type: type,
         data: data,
         table: "subject",
+        setOpen: setOpen,
       }}
+      relatedData={relatedData}
     />
   ),
 };
 
-function FormModal({ modalData }: FormModalProps) {
+function FormModal({ modalData, relatedData }: FormModalProps) {
+  // console.log("relatedData", relatedData);
+  // console.log("FormModal relatedData snapshot:", JSON.stringify(relatedData));
   const [open, setOpen] = useState(false);
   const size = modalData.type === "create" ? "w-8 h-8" : "w-7 h-7";
   const bgColor =
@@ -65,13 +88,32 @@ function FormModal({ modalData }: FormModalProps) {
     setOpen(!open);
   }
 
-  function alwaysClose() {
-    setOpen(false);
-  }
-
+  // const Form = (props: any) => {
   const Form = () => {
-    return modalData.type === "delete" ? (
-      <form action="" className="p-4 flex flex-col gap-4">
+    const [state, formAction] = useFormState(
+      deleteActionObject[modalData.table],
+      {
+        success: false,
+        error: false,
+      }
+    );
+
+    const router = useRouter();
+
+    useEffect(
+      function () {
+        if (state.success) {
+          toast(`Subject deleted}`);
+          router.refresh();
+          setOpen(false);
+        }
+      },
+      [state]
+    );
+
+    return modalData.type === "delete" && modalData.id ? (
+      <form action={formAction} className="p-4 flex flex-col gap-4">
+        <input type="text | number" name="id" value={modalData.id} hidden />
         <span className="text-center font-medium">
           Are you sure? All data will be lost in the {modalData.table}'s
           database?
@@ -89,11 +131,18 @@ function FormModal({ modalData }: FormModalProps) {
       //     data: {},
       //   }}
       // />
-      forms[modalData.table](modalData.type, modalData.data)
+
+      forms[modalData.table](
+        setOpen,
+        modalData.type,
+        modalData.data,
+        relatedData
+      )
     ) : (
       "Form Not found"
     );
   };
+
   return (
     <div className="">
       <button
@@ -123,3 +172,41 @@ function FormModal({ modalData }: FormModalProps) {
 }
 
 export default FormModal;
+
+// I have done this  subject: (setOpen, type, data, relatedData) => (
+//       <SubjectForm
+//         modalData={{
+//           type: type,
+//           data: data,
+//           table: "subject",
+//           setOpen: setOpen,
+//         }}
+//         relatedData={relatedData}
+//       />
+// export type formModal = {
+//   table:
+//     | "teacher"
+//     | "student"
+//     | "parent"
+//     | "subject"
+//     | "class"
+//     | "lesson"
+//     | "exam"
+//     | "assignment"
+//     | "result"
+//     | "attendance"
+//     | "event"
+//     | "announcement";
+//   data?: any;
+//   type: "create" | "update" | "delete";
+//   id?: any;
+//   setOpen?: Dispatch<SetStateAction<boolean>>;
+// };
+
+// export interface FormModalProps {
+//   modalData: formModal;
+//   relatedData?: any;
+// }
+
+// function SubjectForm({ modalData, relatedData }: FormModalProps) {
+//   // console.log("Subject related Data", relatedData);
