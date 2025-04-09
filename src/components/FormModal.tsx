@@ -125,7 +125,7 @@ function FormModal({ modalData, relatedData }: FormModalProps) {
   const Form = () => {
     // console.log("Form Props", relatedData);
     const [state, formAction] = useFormState(
-      deleteActionObject[modalData.table],
+      deleteActionObject[modalData.table as keyof typeof deleteActionObject],
       {
         success: false,
         error: false,
