@@ -1,3 +1,4 @@
+import FormContainer from "@/components/FormContainer";
 import FormModal from "@/components/FormModal";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
@@ -67,23 +68,23 @@ function renderRow(rowData: renderRowStudent) {
       <td className="hidden md:hidden lg:table-cell">{rowData.address}</td>
       <td>
         <div className="flex items-center gap-2">
-          <Link href={`/list/students/student${rowData.id}`}>
+          <Link href={`/list/students/${rowData.id}`}>
             <button className="w-7 h-7 flex items-center justify-center rounded-full bg-lightColor">
               <Image src="/view.png" alt="" width={16} height={16} />
             </button>
           </Link>
           {role === "admin" && (
             <>
-              <FormModal
+              <FormContainer
                 modalData={{
                   table: "student",
                   type: "update",
                   id: rowData.id,
                 }}
               />
-              <FormModal
+              <FormContainer
                 modalData={{
-                  table: "assignment",
+                  table: "student",
                   type: "delete",
                   id: rowData.id,
                 }}
@@ -161,7 +162,7 @@ async function StudentList({
               <Image width={14} height={14} src="/sort.png" alt="" />
             </button>
             {role === "admin" && (
-              <FormModal modalData={{ table: "student", type: "create" }} />
+              <FormContainer modalData={{ table: "student", type: "create" }} />
             )}
           </div>
         </div>

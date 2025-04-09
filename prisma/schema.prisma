@@ -32,7 +32,7 @@ model Student {
   grade       Grade        @relation(fields: [gradeId], references: [id])
   attendances Attendance[]
   results     Result[]
-  // birthday    DateTime
+  birthday    DateTime
 }
 
 model Teacher {
@@ -50,7 +50,7 @@ model Teacher {
   subjects  Subject[]
   lessons   Lesson[]
   classes   Class[]
-  // birthday  DateTime
+  birthday  DateTime
 }
 
 model Parent {

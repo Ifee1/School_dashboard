@@ -69,9 +69,9 @@ async function main() {
         sex: i % 2 === 0 ? UserSex.MALE : UserSex.FEMALE,
         subjects: { connect: [{ id: (i % 10) + 1 }] },
         classes: { connect: [{ id: (i % 6) + 1 }] },
-        // birthday: new Date(
-        //   new Date().setFullYear(new Date().getFullYear() - 30)
-        // ),
+        birthday: new Date(
+          new Date().setFullYear(new Date().getFullYear() - 30)
+        ),
       },
     });
   }
@@ -126,9 +126,9 @@ async function main() {
         parentId: `parentId${Math.ceil(i / 2) % 25 || 25}`,
         gradeId: (i % 6) + 1,
         classId: (i % 6) + 1,
-        // birthday: new Date(
-        //   new Date().setFullYear(new Date().getFullYear() - 10)
-        // ),
+        birthday: new Date(
+          new Date().setFullYear(new Date().getFullYear() - 10)
+        ),
       },
     });
   }

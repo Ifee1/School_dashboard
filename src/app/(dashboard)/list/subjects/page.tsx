@@ -129,7 +129,7 @@ async function SubjectList({
               <Image width={14} height={14} src="/sort.png" alt="" />
             </button>
             {role === "admin" && (
-              <FormModal
+              <FormContainer
                 modalData={{
                   table: "subject",
                   type: "create",

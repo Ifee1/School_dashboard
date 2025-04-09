@@ -1,12 +1,41 @@
 import Announcements from "@/components/Announcements";
 import BigCalendar from "@/components/BigCalendar";
+import BigCalendarContainer from "@/components/BigCalendarContainer";
+import FormContainer from "@/components/FormContainer";
 import FormModal from "@/components/FormModal";
 import PerformanceChart from "@/components/PerformanceChart";
-import { table } from "console";
+import prisma from "@/lib/prisma";
+import { role } from "@/lib/utils";
+import { Teacher } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 
-function SingleTeacherPage() {
+async function SingleTeacherPage({
+  params: { id },
+}: {
+  params: { id: string };
+}) {
+  const teacher:
+    | (Teacher & {
+        _count: { subjects: number; lessons: number; classes: number };
+      })
+    | null = await prisma.teacher.findUnique({
+    where: { id },
+    include: {
+      _count: {
+        select: {
+          subjects: true,
+          lessons: true,
+          classes: true,
+        },
+      },
+    },
+  });
+
+  if (!teacher) {
+    return notFound();
+  }
   return (
     <div className="flex-1 p-4 flex flex-col xl:flex-row gap-4">
       {/*LEFT  */}
@@ -17,7 +46,10 @@ function SingleTeacherPage() {
           <div className="bg-lightColor py-6 px-4 rounded-md flex flex-1 gap-4">
             <div className="w-1/3">
               <Image
-                src="https://images.pexels.com/photos/32976/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=600"
+                src={
+                  teacher.img ||
+                  "https://images.pexels.com/photos/32976/pexels-photo.jpg?=compress&cs=tinysrgb&w=600"
+                }
                 alt=""
                 width={144}
                 height={144}
@@ -26,20 +58,18 @@ function SingleTeacherPage() {
             </div>
             <div className="w-2/3 flex flex-col justify-between gap-4">
               <div className="flex items-center justify-between">
-                <h1 className="text-xl font-semibold">Casper Okafor</h1>
-                <FormModal
-                  modalData={{
-                    id: 1,
-                    table: "teacher",
-                    type: "update",
-                    data: {
-                      id: 1,
-                      username: "Casper Okafor",
-                      email: "yy@gmail.com",
-                      bloodType: "O+",
-                    },
-                  }}
-                />
+                <h1 className="text-xl font-semibold">
+                  {teacher.username + " " + teacher.surname}
+                </h1>
+                {role === "admin" && (
+                  <FormContainer
+                    modalData={{
+                      table: "teacher",
+                      type: "update",
+                      data: teacher,
+                    }}
+                  />
+                )}
               </div>
               <p className="text-gray-500 text-sm">
                 I teach French and German. Students surprisingly love it.
@@ -47,23 +77,21 @@ function SingleTeacherPage() {
               <div className="flex items-center justify-between flex-wrap gap-2 text-xs font-medium">
                 <div className="w-full md:w-1/3 lg:w-full xl:w-1/3 flex items-center gap-2 ">
                   <Image src="/blood.png" alt="" width={14} height={14} />
-                  <span>O+</span>
+                  <span>{teacher.bloodType}</span>
                 </div>
                 <div className="w-full md:w-1/3 lg:w-full xl:w-1/3 flex items-center gap-2 ">
                   <Image src="/date.png" alt="" width={14} height={14} />
-                  <span>January, 2025</span>
-                </div>
-                <div className="w-full md:w-1/3 lg:w-full xl:w-1/3 flex items-center gap-2 ">
-                  <Image src="/mail.png" alt="" width={14} height={14} />
                   <span>
-                    casperokafor
-                    <br />
-                    @gmail.com
+                    {new Intl.DateTimeFormat("en-US").format(teacher.birthday)}
                   </span>
                 </div>
                 <div className="w-full md:w-1/3 lg:w-full xl:w-1/3 flex items-center gap-2 ">
+                  <Image src="/mail.png" alt="" width={14} height={14} />
+                  <span>{teacher.email || "-"}</span>
+                </div>
+                <div className="w-full md:w-1/3 lg:w-full xl:w-1/3 flex items-center gap-2 ">
                   <Image src="/phone.png" alt="" width={14} height={14} />
-                  <span>+234 7844</span>
+                  <span>{teacher.phone}</span>
                 </div>
               </div>
             </div>
@@ -94,7 +122,9 @@ function SingleTeacherPage() {
                 alt=""
               />
               <div className="">
-                <h1 className="text-xl font-semibold">5</h1>
+                <h1 className="text-xl font-semibold">
+                  {teacher._count.subjects}
+                </h1>
                 <span className="text-sm text-gray-400">Branches</span>
               </div>
             </div>
@@ -108,7 +138,9 @@ function SingleTeacherPage() {
                 alt=""
               />
               <div className="">
-                <h1 className="text-xl font-semibold">8</h1>
+                <h1 className="text-xl font-semibold">
+                  {teacher._count.lessons}
+                </h1>
                 <span className="text-sm text-gray-400">Lessons</span>
               </div>
             </div>
@@ -122,7 +154,9 @@ function SingleTeacherPage() {
                 alt=""
               />
               <div className="">
-                <h1 className="text-xl font-semibold">7</h1>
+                <h1 className="text-xl font-semibold">
+                  {teacher._count.classes}
+                </h1>
                 <span className="text-sm text-gray-400">Classes</span>
               </div>
             </div>
@@ -132,7 +166,8 @@ function SingleTeacherPage() {
         {/* BOTTOM */}
         <div className="mt-4 bg-white rounded-md p-4 h-[800px]">
           <h1>Teacher's Schedule</h1>
-          <BigCalendar />
+          {/* <BigCalendar /> */}
+          <BigCalendarContainer type="teacherId" id={teacher.id} />
         </div>
       </div>
 

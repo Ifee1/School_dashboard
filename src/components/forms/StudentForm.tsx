@@ -3,46 +3,57 @@
 import { FormModalProps, inputField } from "@/lib/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import InputField from "../InputField";
 import Image from "next/image";
+import { toast } from "react-toastify";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useFormState } from "react-dom";
+import { CldUploadWidget } from "next-cloudinary";
+import { createStudent, updateStudent } from "@/lib/actions";
+import { studentsSchema, StudentsSchema } from "@/lib/formValidationSchemas";
 
-const schema = z.object({
-  username: z
-    .string()
-    .min(3, { message: "Username must be at least 3 characters" })
-    .max(25, { message: "Username must be 25 characters maximum" }),
-  email: z.string().email({ message: "Invalid Email address" }),
-  password: z
-    .string()
-    .min(4, { message: "Password must be at least 4 characters" }),
-  firstName: z.string().min(1, { message: "First name is required" }),
-  lastName: z.string().min(1, { message: "Last name is required" }),
-  bloodType: z.string().min(1, { message: "Blood Type is required" }),
-  phone: z.string().min(1, { message: "Phone is required" }),
-  address: z.string().min(1, { message: "Address is required" }),
-  birthday: z.date({ message: "Birthday is required" }),
-  sex: z.enum(["male", "female"], { message: "sex is required" }),
-  img: z.instanceof(File, { message: "Image is required" }),
-});
+function StudentForm({ modalData, relatedData }: FormModalProps) {
+  const [state, formAction] = useFormState(
+    modalData.type === "create" ? createStudent : updateStudent,
+    {
+      success: false,
+      error: false,
+    }
+  );
 
-type Inputs = z.infer<typeof schema>;
+  const router = useRouter();
 
-function StudentForm({ modalData }: FormModalProps) {
+  useEffect(
+    function () {
+      if (state.success) {
+        toast(`Student ${modalData.type === "create" ? "created" : "Updated"}`);
+        setTimeout(function () {
+          modalData.setOpen!(false);
+        }, 3000);
+        router.refresh();
+      }
+    },
+    [state]
+  );
+
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({
-    resolver: zodResolver(schema),
+  } = useForm<StudentsSchema>({
+    resolver: zodResolver(studentsSchema),
   });
-  // console.log(errors.password);
 
   const onSubmit = handleSubmit((data) => {
+    formAction({ ...data, img: img?.secure_url });
     console.log(data);
-
-    console.log("clicked");
   });
+
+  const { classes, grades } = relatedData;
+  // console.log(grades);
+
+  const [img, setImage] = useState<any>();
   return (
     <form action="" className="flex flex-col gap-8" onSubmit={onSubmit}>
       <h1 className="text-xl font-semibold">Create a new Student</h1>
@@ -83,16 +94,16 @@ function StudentForm({ modalData }: FormModalProps) {
           name="firstName"
           type="text"
           register={register}
-          defaultValue={modalData.data?.firstName}
+          defaultValue={modalData.data?.name}
           error={errors?.firstName}
         />
         <InputField
-          label="Last Name"
-          name="lastName"
+          label="Surname"
+          name="surname"
           type="text"
           register={register}
-          defaultValue={modalData.data?.lastName}
-          error={errors?.lastName}
+          defaultValue={modalData.data?.surname}
+          error={errors?.surname}
         />
         <InputField
           label="Phone"
@@ -118,16 +129,33 @@ function StudentForm({ modalData }: FormModalProps) {
           defaultValue={modalData.data?.bloodType}
           error={errors?.bloodType}
         />
-
         <InputField
           label="Date of Birth"
           name="birthday"
           type="date"
           register={register}
-          defaultValue={modalData.data?.birthday}
+          defaultValue={modalData.data?.birthday.toISOString().split("T")[0]}
           error={errors?.birthday}
         />
-
+        <InputField
+          label="Parent Id"
+          name="parentId"
+          type="text"
+          register={register}
+          error={errors?.parentId}
+          defaultValue={modalData?.data?.parentId}
+        />
+        {modalData.data && (
+          <InputField
+            label="id"
+            name="id"
+            type="text"
+            register={register}
+            error={errors?.id}
+            defaultValue={modalData?.data?.id}
+            hidden
+          />
+        )}
         <div className="flex flex-col gap-2 w-full md:w-1/4">
           <label className="text-xs text-gray-400">Sex</label>
           <select
@@ -136,8 +164,8 @@ function StudentForm({ modalData }: FormModalProps) {
             defaultValue={modalData.data?.sex}
             {...register("sex")}
           >
-            <option value="male">Male</option>
-            <option value="female">Female</option>
+            <option value="MALE">Male</option>
+            <option value="FEMALE">Female</option>
           </select>
           {errors.sex && (
             <p className="text-xs text-red-700">
@@ -145,29 +173,81 @@ function StudentForm({ modalData }: FormModalProps) {
             </p>
           )}
         </div>
-
-        <div className="flex flex-col gap-2 w-full md:w-1/4 justify-center">
-          <label
-            className="text-xs text-gray-400 flex items-center gap-2 cursor-pointer"
-            htmlFor="img"
+        <div className="flex flex-col gap-2 w-full md:w-1/4">
+          <label className="text-xs text-gray-400">Grade</label>
+          <select
+            className="w-full ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm"
+            defaultValue={modalData.data?.grades}
+            {...register("gradeId")}
           >
-            <Image src="/upload.png" alt="" width={28} height={28} />
-            <span>Upload a photo</span>
-          </label>
-          <input
-            type="file"
-            id="img"
-            className="hidden"
-            defaultValue={modalData.data?.img}
-            {...register("img")}
-          />
-
-          {errors.img && (
+            {grades.map(function (grade: any) {
+              return (
+                <option
+                  value={grade.id}
+                  key={grade.id}
+                  selected={
+                    modalData.data && grade.id === modalData.data.gradeId
+                  }
+                >
+                  {grade.level}
+                </option>
+              );
+            })}
+          </select>
+          {errors.gradeId && (
             <p className="text-xs text-red-700">
-              {errors.img.message?.toString()}
+              {errors.gradeId.message?.toString()}
             </p>
           )}
         </div>
+
+        <div className="flex flex-col gap-2 w-full md:w-1/4">
+          <label className="text-xs text-gray-400">Class</label>
+          <select
+            className="w-full ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm"
+            defaultValue={modalData.data?.classes}
+            {...register("classId")}
+          >
+            {classes.map(function (classTag: any) {
+              return (
+                <option
+                  value={classTag.id}
+                  key={classTag.id}
+                  selected={
+                    modalData.data && classTag.id === modalData.data.classTagId
+                  }
+                >
+                  ( {classTag.name} -
+                  {classTag._count.students + "/" + classTag.capacity} Capacity)
+                </option>
+              );
+            })}
+          </select>
+          {errors.classId && (
+            <p className="text-xs text-red-700">
+              {errors.classId.message?.toString()}
+            </p>
+          )}
+        </div>
+
+        <CldUploadWidget
+          uploadPreset="School"
+          onSuccess={(result, { widget }) => {
+            setImage(result.info), widget.close();
+          }}
+        >
+          {({ open }) => {
+            return (
+              <label
+                className="text-xs text-gray-400 flex items-center gap-2 cursor-pointer"
+                onClick={() => open()}
+              >
+                <Image src="/upload.png" alt="" width={28} height={28} />
+                <span>Upload a photo</span>
+              </label>
+            );
+          }}
+        </CldUploadWidget>
       </div>
       <button className="bg-blue-500 py-2 px-4 text-white rounded-md border-none self-center">
         {modalData.type === "create" ? "Create" : " Update"}

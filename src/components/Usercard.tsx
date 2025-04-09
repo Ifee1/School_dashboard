@@ -3,6 +3,7 @@ import { UserCardModalProps } from "@/lib/types";
 import Image from "next/image";
 
 async function UserCard({ userModal }: UserCardModalProps) {
+  // console.log("UserCard", relatedData);
   const modelMap: Record<typeof userModal.type, any> = {
     admin: prisma.admin,
     teacher: prisma.teacher,

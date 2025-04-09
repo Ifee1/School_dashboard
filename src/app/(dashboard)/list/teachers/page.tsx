@@ -1,3 +1,4 @@
+import FormContainer from "@/components/FormContainer";
 import FormModal from "@/components/FormModal";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
@@ -49,7 +50,7 @@ function renderRow(
           </Link>
           {role === "admin" && (
             <>
-              <FormModal
+              <FormContainer
                 modalData={{
                   table: "teacher",
                   type: "update",
@@ -57,7 +58,7 @@ function renderRow(
                 }}
               />
 
-              <FormModal
+              <FormContainer
                 modalData={{
                   table: "teacher",
                   type: "delete",
@@ -183,7 +184,7 @@ async function TeacherList({
               //   <Image src="/delete.png" alt="" width={16} height={16} />
               // </button>
 
-              <FormModal modalData={{ table: "teacher", type: "create" }} />
+              <FormContainer modalData={{ table: "teacher", type: "create" }} />
             )}
           </div>
         </div>

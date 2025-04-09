@@ -1,3 +1,4 @@
+import FormContainer from "@/components/FormContainer";
 import FormModal from "@/components/FormModal";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
@@ -55,7 +56,7 @@ function renderRow(rowData: renderRowExams) {
         <div className="flex items-center gap-2">
           {(role === "admin" || role === "teacher") && (
             <>
-              <FormModal
+              <FormContainer
                 modalData={{
                   table: "exam",
                   type: "update",
@@ -63,7 +64,7 @@ function renderRow(rowData: renderRowExams) {
                 }}
               />
 
-              <FormModal
+              <FormContainer
                 modalData={{
                   table: "exam",
                   type: "delete",
@@ -180,12 +181,14 @@ async function ExamList({
             <button className="w-8 h-8 rounded-full flex items-center justify-center bg-normalYellow">
               <Image width={14} height={14} src="/sort.png" alt="" />
             </button>
-            <FormModal
-              modalData={{
-                table: "exam",
-                type: "create",
-              }}
-            />
+            {(role === "admin" || role === "teacher") && (
+              <FormContainer
+                modalData={{
+                  table: "exam",
+                  type: "create",
+                }}
+              />
+            )}
           </div>
         </div>
       </div>

@@ -1,3 +1,4 @@
+import FormContainer from "@/components/FormContainer";
 import FormModal from "@/components/FormModal";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
@@ -53,22 +54,22 @@ function renderRow(rowData: renderRowClasses) {
       <td className="hidden md:hidden lg:table-cell">{rowData.grade.level}</td>
 
       <td className="hidden md:hidden lg:table-cell">
-        {rowData.supervisor.name}
+        {rowData.supervisor?.name}
       </td>
 
       <td>
         <div className="flex items-center gap-2">
           {role === "admin" && (
             <>
-              <FormModal
+              <FormContainer
                 modalData={{
                   table: "class",
                   type: "update",
-                  id: rowData.id,
+                  data: rowData,
                 }}
               />
 
-              <FormModal
+              <FormContainer
                 modalData={{
                   table: "class",
                   type: "delete",
@@ -150,7 +151,7 @@ async function ClassList({
               <Image width={14} height={14} src="/sort.png" alt="" />
             </button>
             {role === "admin" && (
-              <FormModal
+              <FormContainer
                 modalData={{
                   table: "class",
                   type: "create",

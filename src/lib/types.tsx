@@ -218,6 +218,7 @@ export type UserCardModal = {
 
 export interface UserCardModalProps {
   userModal: UserCardModal;
+  relatedData?: any;
 }
 
 export type countChartType = {
