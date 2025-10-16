@@ -34,7 +34,7 @@ function StudentForm({ modalData, relatedData }: FormModalProps) {
         router.refresh();
       }
     },
-    [modalData.setOpen, modalData.type, router]
+    [modalData.setOpen, modalData.type, router, state.success]
   );
 
   const {
