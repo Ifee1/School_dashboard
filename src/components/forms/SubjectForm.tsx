@@ -33,7 +33,7 @@ function SubjectForm({ modalData, relatedData }: FormModalProps) {
         router.refresh();
       }
     },
-    [state]
+    [modalData.setOpen, modalData.type, router]
   );
 
   const {
