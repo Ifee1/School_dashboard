@@ -161,7 +161,7 @@ async function SingleStudentPage({
 
         {/* BOTTOM */}
         <div className="mt-4 bg-white rounded-md p-4 h-[800px]">
-          <h1>Student's Schedule</h1>
+          <h1>Student&aposs Schedule</h1>
           <BigCalendarContainer type="classId" id={student.class.id} />
         </div>
       </div>
@@ -175,31 +175,31 @@ async function SingleStudentPage({
               className="p-3 rounded-md bg-lightColor"
               href={`/list/teachers?classId=${3}`}
             >
-              Student's Teachers
+              Student&aposs Teachers
             </Link>
             <Link
               className="p-3 rounded-md bg-lightShadeColor"
               href={`/list/results?classId=${2}`}
             >
-              Student's Result
+              Student&aposs Result
             </Link>
             <Link
               className="p-3 rounded-md bg-lightPurple"
               href={`/list/lessons?studentId=${"student2"}`}
             >
-              Student's Lessons
+              Student&aposs Lessons
             </Link>
             <Link
               className="p-3 rounded-md bg-lightYellow"
               href={`/list/exams?classId=${2}`}
             >
-              Student's Exams
+              Student&aposs Exams
             </Link>
             <Link
               className="p-3 rounded-md bg-pink-50"
               href={`/list/assignments?classId=${2}`}
             >
-              Student's Assignments
+              Student&aposs Assignments
             </Link>
           </div>
         </div>

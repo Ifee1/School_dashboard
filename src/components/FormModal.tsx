@@ -142,7 +142,7 @@ function FormModal({ modalData, relatedData }: FormModalProps) {
           setOpen(false);
         }
       },
-      [state]
+      [state, router]
     );
 
     return modalData.type === "delete" && modalData.id ? (

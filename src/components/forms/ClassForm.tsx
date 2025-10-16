@@ -43,7 +43,7 @@ function ClassForm({ modalData, relatedData }: FormModalProps) {
         router.refresh();
       }
     },
-    [state]
+    [modalData.setOpen, modalData.type, router, state.success]
   );
 
   const {
